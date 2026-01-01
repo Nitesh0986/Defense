@@ -1,10 +1,10 @@
-// script.js
-
 async function analyzeIngredients() {
   const ingredientsInput = document.getElementById("ingredients");
   const output = document.getElementById("output");
 
   const ingredients = ingredientsInput.value;
+
+
 
   if (!ingredients.trim()) {
     output.innerText = "Please enter an ingredient list.";
@@ -13,8 +13,7 @@ async function analyzeIngredients() {
 
   output.innerText = "Thinking...";
 
-  // WARNING: never expose real API keys in production front-end code.
-  const API_KEY = "AIzaSyAk9TfEEGTKqWZGnIclKxI1G5VSSNBSMG4"; // <-- replace with your key
+
 
   const prompt = `
 You are an AI-native consumer health co-pilot.
@@ -30,7 +29,6 @@ Ingredients:
 ${ingredients}
 `;
 
-  // Use a currently supported Gemini model endpoint
   const endpoint =
     "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" +
     API_KEY;
@@ -38,9 +36,7 @@ ${ingredients}
   try {
     const response = await fetch(endpoint, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [
           {
@@ -51,45 +47,32 @@ ${ingredients}
       })
     });
 
-    // Handle HTTP errors first
     if (!response.ok) {
-      let errorBody = {};
-      try {
-        errorBody = await response.json();
-      } catch (e) {
-        // ignore parse failure
-      }
-      console.error("API error:", response.status, response.statusText, errorBody);
-      output.innerText = "API error: " + response.status + ". Check console.";
+      output.innerText = "API error. Check console.";
       return;
     }
 
     const data = await response.json();
-    console.log("Gemini response:", data);
-
-    // Defensive checks before accessing [0]
-    if (!data.candidates || data.candidates.length === 0) {
-      console.error("No candidates in response:", data);
-      output.innerText = "No AI response received. Try again.";
-      return;
-    }
 
     if (
-      !data.candidates[0].content ||
-      !data.candidates[0].content.parts ||
-      data.candidates[0].content.parts.length === 0
+      !data.candidates ||
+      !data.candidates[0]?.content?.parts?.length
     ) {
-      console.error("No content parts in first candidate:", data);
-      output.innerText = "Response format unexpected. Check console.";
+      output.innerText = "No valid response from AI.";
       return;
     }
 
-    const aiText = data.candidates[0].content.parts[0].text || "";
-    output.innerText = aiText.trim()
-      ? aiText
-      : "Got an empty response from the model.";
+    output.innerText = data.candidates[0].content.parts[0].text;
+
   } catch (error) {
-    console.error("Request failed:", error);
-    output.innerText = "Something went wrong. Check console.";
+    console.error(error);
+    output.innerText = "Something went wrong.";
   }
 }
+script>
+  function startDemo() {
+    const screen = document.getElementById("aiScreen");
+    screen.classList.remove("hidden");
+    screen.scrollIntoView({ behavior: "smooth" });
+  }
+</script>
