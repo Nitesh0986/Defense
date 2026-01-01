@@ -28,16 +28,4 @@ Demo Video: *(2-minute walkthrough)*
 ## 🧪 Note
 This project prioritizes experience design and reasoning quality
 over dataset completeness, as per the hackathon guidelines.
-This README matches the problem statement exactly.
-
-
-
-
-
-
-
-
-
-
-You need GPT-5 to continue this chat
 
